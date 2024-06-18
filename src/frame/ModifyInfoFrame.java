@@ -120,15 +120,22 @@ public class ModifyInfoFrame extends JFrame {
     }
 
     private void modifyInfo() {
-        // todo: 修改详细信息逻辑
+        // todo: 修改详细信息
         Connection connection = null;
         PreparedStatement statement = null;
 
         try {
+
             connection = DatabaseConnection.getConnection();
-            String sql = "SELECT * FROM departments";
+            String sql = "update students\n" +
+                    "set students.job_id   = (select jobs.job_id from jobs where job_title = ? and company_name = ?),\n" +
+                    "    employment_status = ?\n" +
+                    "where student_id = ?;";
+
+            connection.setAutoCommit(false);
             statement = connection.prepareStatement(sql);
             statement.executeUpdate();
+            connection.commit();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "请输入正确信息");
@@ -138,7 +145,6 @@ public class ModifyInfoFrame extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        new ModifyInfoFrame(new DefaultTableModel(), 0);
-    }
+    
+
 }

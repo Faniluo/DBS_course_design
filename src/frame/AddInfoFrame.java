@@ -87,13 +87,12 @@ public class AddInfoFrame extends JFrame {
         textField7.setBounds(120, 240, 160, 25);
         panel.add(textField7);
 
-        JButton modifyButton = new JButton("修改");
+        JButton modifyButton = new JButton("添加");
         modifyButton.setBounds(130, 280, 80, 25);
         panel.add(modifyButton);
 
         add(panel);
         setVisible(true);
-
 
 
     }
