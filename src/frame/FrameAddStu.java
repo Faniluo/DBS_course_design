@@ -1,6 +1,6 @@
 package frame;
 
-import util.DatabaseConnection;
+import util.DBUtil;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -26,7 +26,7 @@ public class FrameAddStu extends JFrame {
     }
 
     private void initView() {
-        setTitle("添加工作信息");
+        setTitle("添加学生信息");
         setSize(355, 270);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -95,7 +95,7 @@ public class FrameAddStu extends JFrame {
         PreparedStatement statementAddStu = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "INSERT INTO students(student_id, student_name, gender, major_id) " +
                     " VALUES (?, ?, ?, ?);";
 
@@ -127,7 +127,7 @@ public class FrameAddStu extends JFrame {
             JOptionPane.showMessageDialog(null, "记录已存在或信息错误");
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(null, statementAddStu, connection);
+            DBUtil.close(null, statementAddStu, connection);
         }
     }
 
@@ -137,7 +137,7 @@ public class FrameAddStu extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT DISTINCT major_id from majors where major_name = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, majorName);
@@ -153,7 +153,7 @@ public class FrameAddStu extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -163,7 +163,7 @@ public class FrameAddStu extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT * FROM departments";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
@@ -178,7 +178,7 @@ public class FrameAddStu extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -188,7 +188,7 @@ public class FrameAddStu extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT * FROM majors WHERE dept_id IN (SELECT dept_id FROM departments WHERE dept_name = ?)";
             statement = connection.prepareStatement(sql);
             statement.setString(1, deptName);
@@ -203,7 +203,7 @@ public class FrameAddStu extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 

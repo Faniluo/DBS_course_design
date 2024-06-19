@@ -1,7 +1,7 @@
 package frame;
 
 import util.CustomRowColorRenderer;
-import util.DatabaseConnection;
+import util.DBUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,10 +19,11 @@ import java.util.Vector;
  * @description
  **/
 
-public class FrameMain extends JFrame {
+public class FrameMain extends JFrame implements onChildFrameCloseListener {
     private JComboBox<String> comboBoxDept;
     private JComboBox<String> comboBoxMajor;
     private DefaultTableModel defaultTableModel;
+    private JTable table;
 
     public FrameMain() {
         initView();
@@ -48,6 +49,9 @@ public class FrameMain extends JFrame {
 
         JMenu menuAdd = new JMenu("添加");
         menuBar.add(menuAdd);
+
+        JMenu menuBackup = new JMenu("备份与恢复");
+        menuBar.add(menuBackup);
 
         JMenu menuExit = new JMenu("退出");
         menuBar.add(menuExit);
@@ -76,7 +80,7 @@ public class FrameMain extends JFrame {
         btnMajorConfirm.setBounds(390, 90, 80, 25);
         panel.add(btnMajorConfirm);
 
-        JTable table = new JTable();
+        table = new JTable();
         CustomRowColorRenderer renderer = new CustomRowColorRenderer();
         table.setBounds(50, 150, 500, 200);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -108,41 +112,45 @@ public class FrameMain extends JFrame {
         // 显示选择的专业的相关信息
         btnMajorConfirm.addActionListener(e -> loadDetails(table, (String) comboBoxMajor.getSelectedItem()));
 
-        JMenuItem itemUpdate = new JMenuItem("修改信息");
+        JMenuItem itemUpdate = new JMenuItem("已就业学生信息");
         itemUpdate.addActionListener(e -> {
             // 修改选中记录的信息
             if (!table.getSelectionModel().isSelectionEmpty()) {
                 int selectedRow = table.getSelectedRow();
-                new FrameUpdateInfo(defaultTableModel, selectedRow);
+                new FrameUpdateInfo(defaultTableModel, selectedRow, this);
             } else {
                 JOptionPane.showMessageDialog(FrameMain.this, "请选择要修改的记录");
             }
         });
         menuUpdate.add(itemUpdate);
 
-        JMenuItem itemInsertJob = new JMenuItem("添加工作");
+        JMenuItem itemInsertJob = new JMenuItem("工作");
         itemInsertJob.addActionListener(e -> new FrameAddJob());
         menuAdd.add(itemInsertJob);
 
-        JMenuItem itemInsertGraduate = new JMenuItem("添加毕业生");
+        JMenuItem itemInsertGraduate = new JMenuItem("毕业生");
         itemInsertGraduate.addActionListener(e -> new FrameAddStu());
         menuAdd.add(itemInsertGraduate);
 
-        JMenuItem itemInsertEmpRecord = new JMenuItem("添加就业记录");
+        JMenuItem itemInsertEmpRecord = new JMenuItem("就业记录");
         itemInsertEmpRecord.addActionListener(e -> new FrameAddEmpRecord());
         menuAdd.add(itemInsertEmpRecord);
 
-        JMenuItem itemQueryMajorEmpRate = new JMenuItem("查看专业就业率");
-        itemQueryMajorEmpRate.addActionListener(e -> {
-            // todo: 存储过程查询各专业的毕业生就业率
-        });
+        JMenuItem itemQueryMajorEmpRate = new JMenuItem("专业就业率");
+        itemQueryMajorEmpRate.addActionListener(e -> new FrameMajorEmpRate());
         menuQuery.add(itemQueryMajorEmpRate);
 
-        JMenuItem itemQueryGraduatesInfo = new JMenuItem("查看毕业生就业统计");
-        itemQueryGraduatesInfo.addActionListener(e -> {
-            // todo: 存储过程查询毕业生的人数、待业人数、就业人数和就业率
-        });
+        JMenuItem itemQueryGraduatesInfo = new JMenuItem("毕业生就业统计");
+        itemQueryGraduatesInfo.addActionListener(e -> getGraduateStatistics());
         menuQuery.add(itemQueryGraduatesInfo);
+
+        JMenuItem itemBackup = new JMenuItem("备份");
+        itemBackup.addActionListener(e -> backupDB());
+        menuBackup.add(itemBackup);
+
+        JMenuItem itemRestore = new JMenuItem("恢复");
+        itemRestore.addActionListener(e -> restoreDB());
+        menuBackup.add(itemRestore);
 
         JMenuItem itemLogout = new JMenuItem("退出登录");
         itemLogout.addActionListener(e -> {
@@ -156,13 +164,45 @@ public class FrameMain extends JFrame {
         menuExit.add(itemExitSys);
     }
 
+    private void backupDB() {
+        try {
+            String command = "mysqldump -u " + DBUtil.USER + " --password=" + DBUtil.PASSWORD + " student_employment_system -r ./backupDB.sql";
+            Process process = Runtime.getRuntime().exec(command);
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                JOptionPane.showMessageDialog(FrameMain.this, "数据库备份成功");
+            } else {
+                JOptionPane.showMessageDialog(FrameMain.this, "数据库备份失败，退出码: " + exitCode);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(FrameMain.this, "数据库备份异常");
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void restoreDB() {
+        try {
+            String command = "mysql -u " + DBUtil.USER + " --password=" + DBUtil.PASSWORD + " student_employment_system -r ./backupDB.sql";
+            Process process = Runtime.getRuntime().exec(command);
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                JOptionPane.showMessageDialog(FrameMain.this, "数据库恢复成功");
+            } else {
+                JOptionPane.showMessageDialog(FrameMain.this, "数据库恢复失败，退出码: " + exitCode);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(FrameMain.this, "数据库恢复异常");
+            throw new RuntimeException(ex);
+        }
+    }
+
     private void loadDetails(JTable table, String selectedMajor) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "select students.student_id, student_name, gender, employment_status, job_title, job_type, company_name\n" +
                     "from students\n" +
                     "         left join employment_records on students.student_id = employment_records.student_id\n" +
@@ -208,7 +248,7 @@ public class FrameMain extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -218,7 +258,7 @@ public class FrameMain extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT * FROM departments";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
@@ -233,7 +273,7 @@ public class FrameMain extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -243,7 +283,7 @@ public class FrameMain extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT * FROM majors WHERE dept_id IN (SELECT dept_id FROM departments WHERE dept_name = ?)";
             statement = connection.prepareStatement(sql);
             statement.setString(1, deptName);
@@ -258,7 +298,44 @@ public class FrameMain extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
+        }
+    }
+
+    private void getGraduateStatistics() {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = DBUtil.getConnection();
+            String sql = "call get_graduate_statistics()";
+            statement = connection.prepareStatement(sql);
+            resultSet = statement.executeQuery();
+
+            int totalStu = 0, unEmpStu = 0, empStu = 0;
+            double empRate = 0;
+
+            while (resultSet.next()) {
+                totalStu = resultSet.getInt(1);
+                unEmpStu = resultSet.getInt(2);
+                empStu = resultSet.getInt(3);
+                empRate = resultSet.getDouble(4);
+            }
+
+            String formattedEmpRate = String.format("%.2f", empRate);
+
+            String msg = "毕业生共 " + totalStu + " 人\n" +
+                    "未就业毕业生 " + unEmpStu + " 人\n" +
+                    "已就业毕业生 " + empStu + " 人\n" +
+                    "统计就业率 " + formattedEmpRate + "%";
+
+            JOptionPane.showMessageDialog(null, msg);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -266,4 +343,8 @@ public class FrameMain extends JFrame {
         new FrameMain();
     }
 
+    @Override
+    public void onUpdateFrameClosed() {
+        loadDetails(table, (String) comboBoxMajor.getSelectedItem());
+    }
 }

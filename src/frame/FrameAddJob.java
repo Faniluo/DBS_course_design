@@ -1,6 +1,6 @@
 package frame;
 
-import util.DatabaseConnection;
+import util.DBUtil;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -87,7 +87,7 @@ public class FrameAddJob extends JFrame {
         PreparedStatement statementAddJob = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "insert into jobs(job_title, job_type, demand_number, hire_number, company_name)" +
                     "VALUES (?, ?, ?, ?, ?);";
 
@@ -121,7 +121,7 @@ public class FrameAddJob extends JFrame {
             JOptionPane.showMessageDialog(null, "记录已存在或信息错误");
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(null, statementAddJob, connection);
+            DBUtil.close(null, statementAddJob, connection);
         }
     }
 

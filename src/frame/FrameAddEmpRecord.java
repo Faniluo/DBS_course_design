@@ -1,7 +1,7 @@
 package frame;
 
 import util.CheckLegalityUtil;
-import util.DatabaseConnection;
+import util.DBUtil;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -28,7 +28,7 @@ public class FrameAddEmpRecord extends JFrame {
     }
 
     private void initView() {
-        setTitle("修改毕业生信息");
+        setTitle("添加毕业生就业记录");
         setSize(355, 240);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -109,7 +109,7 @@ public class FrameAddEmpRecord extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT student_name FROM students where student_id = ?";
             statement = connection.prepareStatement(sql);
             statement.setInt(1, Integer.parseInt(textFieldStuId.getText()));
@@ -126,7 +126,7 @@ public class FrameAddEmpRecord extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -136,7 +136,7 @@ public class FrameAddEmpRecord extends JFrame {
         PreparedStatement statementUpdateStu = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "insert into employment_records(student_id, job_id)" +
                     "VALUES (?, ?);";
 
@@ -154,14 +154,14 @@ public class FrameAddEmpRecord extends JFrame {
                 JOptionPane.showMessageDialog(null, "添加成功");
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(null, "招聘人数已满");
+                JOptionPane.showMessageDialog(null, "招聘人数已满或信息填写错误");
             }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "记录已存在或信息错误");
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(null, statementUpdateStu, connection);
+            DBUtil.close(null, statementUpdateStu, connection);
         }
     }
 
@@ -171,7 +171,7 @@ public class FrameAddEmpRecord extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT job_id FROM jobs where job_title = ? and company_name = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, jobTitle);
@@ -188,7 +188,7 @@ public class FrameAddEmpRecord extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -198,7 +198,7 @@ public class FrameAddEmpRecord extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT DISTINCT company_name FROM jobs";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
@@ -213,7 +213,7 @@ public class FrameAddEmpRecord extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -223,7 +223,7 @@ public class FrameAddEmpRecord extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT * FROM jobs WHERE company_name = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, comName);
@@ -238,7 +238,7 @@ public class FrameAddEmpRecord extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 

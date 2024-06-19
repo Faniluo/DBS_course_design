@@ -1,8 +1,11 @@
 package util;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.*;
+import java.util.Properties;
 
 /**
  * @author Hanit
@@ -10,11 +13,26 @@ import java.sql.*;
  * @date 2024/6/17 14:57
  * @description
  **/
-public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/student_employment_system?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
-    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+public class DBUtil {
+    public static final String URL;
+    public static final String USER;
+    public static final String PASSWORD;
+    public static final String DRIVER;
+
+    static {
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream("src\\mysql.properties"));
+            // 获取相关属性值
+            USER = properties.getProperty("user");
+            PASSWORD = properties.getProperty("password");
+            URL = properties.getProperty("url");
+            DRIVER = properties.getProperty("driver");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public static Connection getConnection() {
         Connection connection = null;

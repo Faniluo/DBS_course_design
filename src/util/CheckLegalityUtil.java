@@ -17,7 +17,7 @@ public class CheckLegalityUtil {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT * FROM jobs where company_name = ? and job_title = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, comName);
@@ -36,7 +36,7 @@ public class CheckLegalityUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 }

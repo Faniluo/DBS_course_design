@@ -1,6 +1,6 @@
 package frame;
 
-import util.DatabaseConnection;
+import util.DBUtil;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -104,7 +104,7 @@ public class FrameLogin extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
 
             // 创建 PreparedStatement 对象
             String query = "SELECT * FROM users WHERE username = ? and password = ?";
@@ -121,7 +121,7 @@ public class FrameLogin extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 }

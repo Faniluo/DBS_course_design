@@ -2,10 +2,12 @@ package frame;
 
 import util.CheckLegalityUtil;
 import util.ComboBoxUtil;
-import util.DatabaseConnection;
+import util.DBUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,9 +26,12 @@ public class FrameUpdateInfo extends JFrame {
     private JComboBox<String> comboBoxComName;
     private JComboBox<String> comboBoxJobTitle;
 
-    public FrameUpdateInfo(DefaultTableModel tableModel, int selectedRowIndex) {
+    private final onChildFrameCloseListener onChildFrameCloseListener;
+
+    public FrameUpdateInfo(DefaultTableModel tableModel, int selectedRowIndex, onChildFrameCloseListener onChildFrameCloseListener) {
         this.tableModel = tableModel;
         this.selectedRowIndex = selectedRowIndex;
+        this.onChildFrameCloseListener = onChildFrameCloseListener;
         initView();
     }
 
@@ -112,6 +117,14 @@ public class FrameUpdateInfo extends JFrame {
 
         add(panel);
         setVisible(true);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (onChildFrameCloseListener != null) {
+                    onChildFrameCloseListener.onUpdateFrameClosed();
+                }
+            }
+        });
 
         comboBoxComName.addActionListener(e -> loadComboBoxJobTitle((String) comboBoxComName.getSelectedItem()));
 
@@ -132,7 +145,7 @@ public class FrameUpdateInfo extends JFrame {
         String jobTitle = (String) comboBoxJobTitle.getSelectedItem();
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "update employment_records\n" +
                     "set job_id = ?\n" +
                     "where student_id = ?";
@@ -155,7 +168,7 @@ public class FrameUpdateInfo extends JFrame {
             JOptionPane.showMessageDialog(null, "请输入正确信息");
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(null, statementUpdateStu, connection);
+            DBUtil.close(null, statementUpdateStu, connection);
         }
     }
 
@@ -165,7 +178,7 @@ public class FrameUpdateInfo extends JFrame {
         PreparedStatement statementUpdateStu = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "delete\n" +
                     "from employment_records\n" +
                     "where student_id = ?";
@@ -183,7 +196,7 @@ public class FrameUpdateInfo extends JFrame {
             JOptionPane.showMessageDialog(null, "请输入正确信息");
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(null, statementUpdateStu, connection);
+            DBUtil.close(null, statementUpdateStu, connection);
         }
     }
 
@@ -193,7 +206,7 @@ public class FrameUpdateInfo extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT job_id FROM jobs where job_title = ? and company_name = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, jobTitle);
@@ -210,7 +223,7 @@ public class FrameUpdateInfo extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -220,7 +233,7 @@ public class FrameUpdateInfo extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT DISTINCT company_name FROM jobs";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
@@ -240,7 +253,7 @@ public class FrameUpdateInfo extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
@@ -250,7 +263,7 @@ public class FrameUpdateInfo extends JFrame {
         ResultSet resultSet = null;
 
         try {
-            connection = DatabaseConnection.getConnection();
+            connection = DBUtil.getConnection();
             String sql = "SELECT * FROM jobs WHERE company_name = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, comName);
@@ -271,7 +284,7 @@ public class FrameUpdateInfo extends JFrame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            DatabaseConnection.close(resultSet, statement, connection);
+            DBUtil.close(resultSet, statement, connection);
         }
     }
 
