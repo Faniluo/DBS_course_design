@@ -19,12 +19,12 @@ import java.util.Vector;
  * @description
  **/
 
-public class MainFrame extends JFrame {
-    private JComboBox<String> deptComboBox;
-    private JComboBox<String> majorComboBox;
+public class FrameMain extends JFrame {
+    private JComboBox<String> comboBoxDept;
+    private JComboBox<String> comboBoxMajor;
     private DefaultTableModel defaultTableModel;
 
-    public MainFrame() {
+    public FrameMain() {
         initView();
     }
 
@@ -40,44 +40,41 @@ public class MainFrame extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
-        JMenu modifyMenu = new JMenu("修改");
-        menuBar.add(modifyMenu);
+        JMenu menuUpdate = new JMenu("修改");
+        menuBar.add(menuUpdate);
 
-        JMenu queryMenu = new JMenu("查询");
-        menuBar.add(queryMenu);
+        JMenu menuQuery = new JMenu("查询");
+        menuBar.add(menuQuery);
 
-        JMenu addMenu = new JMenu("添加");
-        menuBar.add(addMenu);
+        JMenu menuAdd = new JMenu("添加");
+        menuBar.add(menuAdd);
 
-        JMenu exitMenu = new JMenu("退出");
-        menuBar.add(exitMenu);
+        JMenu menuExit = new JMenu("退出");
+        menuBar.add(menuExit);
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
 
-        JLabel deptLabel = new JLabel("学院:");
-        deptLabel.setBounds(50, 40, 80, 25);
-        panel.add(deptLabel);
+        JLabel labelDept = new JLabel("学院:");
+        labelDept.setBounds(50, 40, 80, 25);
+        panel.add(labelDept);
 
-        deptComboBox = new JComboBox<>();
-        deptComboBox.setBounds(150, 40, 160, 25);
-        // 从数据库加载数据
-        loadDeptComboBoxData();
-        panel.add(deptComboBox);
+        comboBoxDept = new JComboBox<>();
+        comboBoxDept.setBounds(150, 40, 160, 25);
+        loadDeptComboBoxData(); // 从数据库加载数据
+        panel.add(comboBoxDept);
 
-        JLabel majorLabel = new JLabel("专业:");
-        majorLabel.setBounds(50, 90, 80, 25);
-        panel.add(majorLabel);
+        JLabel labelMajor = new JLabel("专业:");
+        labelMajor.setBounds(50, 90, 80, 25);
+        panel.add(labelMajor);
 
-        majorComboBox = new JComboBox<>();
-        majorComboBox.setBounds(150, 90, 160, 25);
-        // 从数据库加载数据
-        loadMajorComboBoxData((String) deptComboBox.getSelectedItem());
-        panel.add(majorComboBox);
+        comboBoxMajor = new JComboBox<>();
+        comboBoxMajor.setBounds(150, 90, 160, 25);
+        panel.add(comboBoxMajor);
 
-        JButton majorConfirmButton = new JButton("确定");
-        majorConfirmButton.setBounds(390, 90, 80, 25);
-        panel.add(majorConfirmButton);
+        JButton btnMajorConfirm = new JButton("确定");
+        btnMajorConfirm.setBounds(390, 90, 80, 25);
+        panel.add(btnMajorConfirm);
 
         JTable table = new JTable();
         CustomRowColorRenderer renderer = new CustomRowColorRenderer();
@@ -103,57 +100,61 @@ public class MainFrame extends JFrame {
         add(panel);
         setVisible(true);
 
-        loadDetails(table, (String) majorComboBox.getSelectedItem());
+        loadDetails(table, (String) comboBoxMajor.getSelectedItem());
 
-        deptComboBox.addActionListener(e -> {
-            // 根据选择的院系加载相应的专业
-            loadMajorComboBoxData((String) deptComboBox.getSelectedItem());
-        });
+        // 根据选择的院系加载相应的专业
+        comboBoxDept.addActionListener(e -> loadMajorComboBoxData((String) comboBoxDept.getSelectedItem()));
 
-        majorConfirmButton.addActionListener(e -> {
-            // 显示选择的专业的相关信息  (String) deptComboBox.getSelectedItem(),
-            loadDetails(table, (String) majorComboBox.getSelectedItem());
-        });
+        // 显示选择的专业的相关信息
+        btnMajorConfirm.addActionListener(e -> loadDetails(table, (String) comboBoxMajor.getSelectedItem()));
 
-        // modifyMenu.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         // 修改选中记录的信息
-        //         if (!table.getSelectionModel().isSelectionEmpty()) {
-        //             int selectedRow = table.getSelectedRow();
-        //             // String selectedDept = (String) table.getValueAt(selectedRow, 0);
-        //             // String selectedMajor = (String) table.getValueAt(selectedRow, 1);
-        //             modifyRecord(selectedRow);
-        //         }
-        //     }
-        // });
-
-        JMenuItem modifyItem = new JMenuItem("修改信息");
-        modifyItem.addActionListener(e -> {
+        JMenuItem itemUpdate = new JMenuItem("修改信息");
+        itemUpdate.addActionListener(e -> {
             // 修改选中记录的信息
             if (!table.getSelectionModel().isSelectionEmpty()) {
                 int selectedRow = table.getSelectedRow();
-                new ModifyInfoFrame(defaultTableModel, selectedRow);
+                new FrameUpdateInfo(defaultTableModel, selectedRow);
             } else {
-                JOptionPane.showMessageDialog(MainFrame.this, "请选择要修改的记录");
+                JOptionPane.showMessageDialog(FrameMain.this, "请选择要修改的记录");
             }
         });
-        modifyMenu.add(modifyItem);
+        menuUpdate.add(itemUpdate);
 
-        JMenuItem insertItem = new JMenuItem("添加信息");
-        insertItem.addActionListener(e -> {
-            new AddInfoFrame();
+        JMenuItem itemInsertJob = new JMenuItem("添加工作");
+        itemInsertJob.addActionListener(e -> new FrameAddJob());
+        menuAdd.add(itemInsertJob);
+
+        JMenuItem itemInsertGraduate = new JMenuItem("添加毕业生");
+        itemInsertGraduate.addActionListener(e -> new FrameAddStu());
+        menuAdd.add(itemInsertGraduate);
+
+        JMenuItem itemInsertEmpRecord = new JMenuItem("添加就业记录");
+        itemInsertEmpRecord.addActionListener(e -> new FrameAddEmpRecord());
+        menuAdd.add(itemInsertEmpRecord);
+
+        JMenuItem itemQueryMajorEmpRate = new JMenuItem("查看专业就业率");
+        itemQueryMajorEmpRate.addActionListener(e -> {
+            // todo: 存储过程查询各专业的毕业生就业率
         });
-        addMenu.add(insertItem);
-    }
+        menuQuery.add(itemQueryMajorEmpRate);
 
-    // private void insertRecord() {
-    //
-    // }
-    //
-    // private void modifyRecord(int selectedRow) {
-    //
-    // }
+        JMenuItem itemQueryGraduatesInfo = new JMenuItem("查看毕业生就业统计");
+        itemQueryGraduatesInfo.addActionListener(e -> {
+            // todo: 存储过程查询毕业生的人数、待业人数、就业人数和就业率
+        });
+        menuQuery.add(itemQueryGraduatesInfo);
+
+        JMenuItem itemLogout = new JMenuItem("退出登录");
+        itemLogout.addActionListener(e -> {
+            new FrameLogin();
+            dispose();
+        });
+        menuExit.add(itemLogout);
+
+        JMenuItem itemExitSys = new JMenuItem("退出系统");
+        itemExitSys.addActionListener(e -> dispose());
+        menuExit.add(itemExitSys);
+    }
 
     private void loadDetails(JTable table, String selectedMajor) {
         Connection connection = null;
@@ -222,11 +223,11 @@ public class MainFrame extends JFrame {
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
 
-            deptComboBox.addItem(null);
+            comboBoxDept.addItem(null);
 
             while (resultSet.next()) {
                 String deptName = resultSet.getString("dept_name");
-                deptComboBox.addItem(deptName);
+                comboBoxDept.addItem(deptName);
             }
 
         } catch (Exception e) {
@@ -248,10 +249,10 @@ public class MainFrame extends JFrame {
             statement.setString(1, deptName);
             resultSet = statement.executeQuery();
 
-            majorComboBox.removeAllItems();
-            majorComboBox.addItem(null);
+            comboBoxMajor.removeAllItems();
+            comboBoxMajor.addItem(null);
             while (resultSet.next()) {
-                majorComboBox.addItem(resultSet.getString("major_name"));
+                comboBoxMajor.addItem(resultSet.getString("major_name"));
             }
 
         } catch (Exception e) {
@@ -259,11 +260,10 @@ public class MainFrame extends JFrame {
         } finally {
             DatabaseConnection.close(resultSet, statement, connection);
         }
-
     }
 
     public static void main(String[] args) {
-        new MainFrame();
+        new FrameMain();
     }
 
 }

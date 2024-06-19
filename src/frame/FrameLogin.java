@@ -16,11 +16,11 @@ import java.sql.ResultSet;
  * @description
  **/
 
-public class LoginFrame extends JFrame {
-    private JTextField usernameField;
-    private JPasswordField passwordField;
+public class FrameLogin extends JFrame {
+    private JTextField textFieldUsername;
+    private JPasswordField textFieldPassword;
 
-    public LoginFrame() {
+    public FrameLogin() {
         initView();
     }
 
@@ -36,44 +36,44 @@ public class LoginFrame extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(null);
 
-        JLabel userLabel = new JLabel("用户名:");
-        userLabel.setBounds(50, 50, 80, 25);
-        panel.add(userLabel);
+        JLabel labelUser = new JLabel("用户名:");
+        labelUser.setBounds(50, 50, 80, 25);
+        panel.add(labelUser);
 
-        usernameField = new JTextField(20);
-        usernameField.setBounds(150, 50, 160, 25);
-        panel.add(usernameField);
+        textFieldUsername = new JTextField(20);
+        textFieldUsername.setBounds(150, 50, 160, 25);
+        panel.add(textFieldUsername);
 
-        JLabel passwordLabel = new JLabel("密码:");
-        passwordLabel.setBounds(50, 100, 80, 25);
-        panel.add(passwordLabel);
+        JLabel labelPassword = new JLabel("密码:");
+        labelPassword.setBounds(50, 100, 80, 25);
+        panel.add(labelPassword);
 
-        passwordField = new JPasswordField(20);
-        passwordField.setBounds(150, 100, 160, 25);
-        panel.add(passwordField);
+        textFieldPassword = new JPasswordField(20);
+        textFieldPassword.setBounds(150, 100, 160, 25);
+        panel.add(textFieldPassword);
 
-        JButton loginButton = new JButton("登录");
-        loginButton.setBounds(50, 150, 80, 25);
-        panel.add(loginButton);
+        JButton btnLogin = new JButton("登录");
+        btnLogin.setBounds(50, 150, 80, 25);
+        panel.add(btnLogin);
 
-        JButton resetButton = new JButton("重置");
-        resetButton.setBounds(150, 150, 80, 25);
-        panel.add(resetButton);
+        JButton btnReset = new JButton("重置");
+        btnReset.setBounds(150, 150, 80, 25);
+        panel.add(btnReset);
 
         add(panel);
         setVisible(true);
 
-        loginButton.addActionListener(new ActionListener() {
+        btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = usernameField.getText();
-                String password = new String(passwordField.getPassword());
+                String username = textFieldUsername.getText();
+                String password = new String(textFieldPassword.getPassword());
 
                 // 验证用户名和密码
                 // TODO: 添加实际的验证逻辑
                 if (verifyLogin(username, password)) {
                     // JOptionPane.showMessageDialog(null, "登录成功");
-                    new MainFrame();
+                    new FrameMain();
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(null, "用户名或密码错误");
@@ -81,11 +81,11 @@ public class LoginFrame extends JFrame {
             }
         });
 
-        resetButton.addActionListener(new ActionListener() {
+        btnReset.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                usernameField.setText("");
-                passwordField.setText("");
+                textFieldUsername.setText("");
+                textFieldPassword.setText("");
             }
         });
     }
@@ -124,7 +124,5 @@ public class LoginFrame extends JFrame {
             DatabaseConnection.close(resultSet, statement, connection);
         }
     }
-
-
 }
 

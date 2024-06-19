@@ -1,4 +1,4 @@
-import frame.LoginFrame;
+import frame.FrameLogin;
 
 /**
  * @author Hanit
@@ -8,6 +8,6 @@ import frame.LoginFrame;
  **/
 public class Startup {
     public static void main(String[] args) {
-        new LoginFrame();
+        new FrameLogin();
     }
 }
