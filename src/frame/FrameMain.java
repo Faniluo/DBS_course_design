@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Hanit
@@ -164,6 +165,9 @@ public class FrameMain extends JFrame implements onChildFrameCloseListener {
         menuExit.add(itemExitSys);
     }
 
+    /**
+     * 备份数据库
+     */
     private void backupDB() {
         try {
             String command = "mysqldump -u " + DBUtil.USER + " --password=" + DBUtil.PASSWORD + " student_employment_system -r ./backupDB.sql";
@@ -180,9 +184,12 @@ public class FrameMain extends JFrame implements onChildFrameCloseListener {
         }
     }
 
+    /**
+     * 恢复数据库
+     */
     private void restoreDB() {
         try {
-            String command = "mysql -u " + DBUtil.USER + " --password=" + DBUtil.PASSWORD + " student_employment_system -r ./backupDB.sql";
+            String[] command = {"cmd.exe", "/c", "mysql -u " + DBUtil.USER + " --password=" + DBUtil.PASSWORD + " student_employment_system < ./backupDB.sql"};
             Process process = Runtime.getRuntime().exec(command);
             int exitCode = process.waitFor();
             if (exitCode == 0) {
@@ -196,6 +203,12 @@ public class FrameMain extends JFrame implements onChildFrameCloseListener {
         }
     }
 
+    /**
+     * 根据专业查询，将查询信息加载到表格中
+     *
+     * @param table         目标表格
+     * @param selectedMajor 选中专业
+     */
     private void loadDetails(JTable table, String selectedMajor) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -252,6 +265,9 @@ public class FrameMain extends JFrame implements onChildFrameCloseListener {
         }
     }
 
+    /**
+     * 加载学院名
+     */
     private void loadDeptComboBoxData() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -277,6 +293,11 @@ public class FrameMain extends JFrame implements onChildFrameCloseListener {
         }
     }
 
+    /**
+     * 根据学院名，加载专业名
+     *
+     * @param deptName 学院名
+     */
     private void loadMajorComboBoxData(String deptName) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -302,6 +323,9 @@ public class FrameMain extends JFrame implements onChildFrameCloseListener {
         }
     }
 
+    /**
+     * 调用存储过程，获取毕业生统计信息
+     */
     private void getGraduateStatistics() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -339,12 +363,13 @@ public class FrameMain extends JFrame implements onChildFrameCloseListener {
         }
     }
 
-    public static void main(String[] args) {
-        new FrameMain();
-    }
-
+    /**
+     * 回调接口，监听 Update 子窗口关闭，触发刷新列表
+     */
     @Override
     public void onUpdateFrameClosed() {
         loadDetails(table, (String) comboBoxMajor.getSelectedItem());
     }
 }
+
+

@@ -34,6 +34,11 @@ public class DBUtil {
     }
 
 
+    /**
+     * 获取数据库连接
+     *
+     * @return 数据库连接
+     */
     public static Connection getConnection() {
         Connection connection = null;
         try {
@@ -46,6 +51,13 @@ public class DBUtil {
         return connection;
     }
 
+    /**
+     * 释放资源
+     *
+     * @param resultSet  结果集
+     * @param statement  查询
+     * @param connection 连接
+     */
     public static void close(ResultSet resultSet, Statement statement, Connection connection) {
         try {
             // 判断是否为空

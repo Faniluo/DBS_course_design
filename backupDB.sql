@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `departments`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `departments` (
   `dept_id` int NOT NULL AUTO_INCREMENT,
-  `dept_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `dept_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`dept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -133,11 +133,11 @@ DROP TABLE IF EXISTS `jobs`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `jobs` (
   `job_id` int NOT NULL AUTO_INCREMENT,
-  `job_title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `job_type` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `job_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `job_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `demand_number` int DEFAULT NULL,
   `hire_number` int DEFAULT '0',
-  `company_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `company_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`job_id`),
   UNIQUE KEY `job_title` (`job_title`,`company_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -162,7 +162,7 @@ DROP TABLE IF EXISTS `majors`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `majors` (
   `major_id` int NOT NULL AUTO_INCREMENT,
-  `major_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `major_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `dept_id` int DEFAULT NULL,
   PRIMARY KEY (`major_id`),
   KEY `dept_id` (`dept_id`),
@@ -189,10 +189,10 @@ DROP TABLE IF EXISTS `students`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `students` (
   `student_id` int NOT NULL AUTO_INCREMENT,
-  `student_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `gender` enum('男','女') COLLATE utf8mb4_general_ci NOT NULL,
+  `student_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `gender` enum('男','女') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `major_id` int DEFAULT NULL,
-  `employment_status` enum('待业','就业') COLLATE utf8mb4_general_ci DEFAULT '待业',
+  `employment_status` enum('待业','就业') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '待业',
   PRIMARY KEY (`student_id`),
   KEY `major_id` (`major_id`),
   CONSTRAINT `students_ibfk_1` FOREIGN KEY (`major_id`) REFERENCES `majors` (`major_id`),
@@ -219,8 +219,8 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(16) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(16) COLLATE utf8mb4_general_ci NOT NULL,
+  `username` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -244,4 +244,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-19 17:50:30
+-- Dump completed on 2024-06-19 23:11:38

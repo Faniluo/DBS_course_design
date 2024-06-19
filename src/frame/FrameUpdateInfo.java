@@ -137,8 +137,10 @@ public class FrameUpdateInfo extends JFrame {
         });
     }
 
+    /**
+     * 更改已就业毕业生信息
+     */
     private void updateEmpRecord() {
-        // todo: 更改就业记录
         Connection connection = null;
         PreparedStatement statementUpdateStu = null;
         String comName = (String) comboBoxComName.getSelectedItem();
@@ -172,6 +174,10 @@ public class FrameUpdateInfo extends JFrame {
         }
     }
 
+    /**
+     * 删除就业信息
+     * 将就业状态改为‘待业’后，执行删除记录操作
+     */
     private void deleteEmpRecord() {
         // todo: 删除就业记录
         Connection connection = null;
@@ -200,6 +206,13 @@ public class FrameUpdateInfo extends JFrame {
         }
     }
 
+    /**
+     * 根据工作与公司查找对应的工作 ID
+     *
+     * @param jobTitle 工作
+     * @param comName  公司
+     * @return 工作 ID
+     */
     private int getJobId(String jobTitle, String comName) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -227,6 +240,9 @@ public class FrameUpdateInfo extends JFrame {
         }
     }
 
+    /**
+     * 加载下拉框公司名
+     */
     private void loadComboBoxComName() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -257,6 +273,11 @@ public class FrameUpdateInfo extends JFrame {
         }
     }
 
+    /**
+     * 根据公司加载对应工作
+     *
+     * @param comName 公司
+     */
     private void loadComboBoxJobTitle(String comName) {
         Connection connection = null;
         PreparedStatement statement = null;

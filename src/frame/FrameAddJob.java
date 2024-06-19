@@ -82,6 +82,9 @@ public class FrameAddJob extends JFrame {
         btnAddJob.addActionListener(e -> addJob());
     }
 
+    /**
+     * 添加工作
+     */
     public void addJob() {
         Connection connection = null;
         PreparedStatement statementAddJob = null;
@@ -124,9 +127,4 @@ public class FrameAddJob extends JFrame {
             DBUtil.close(null, statementAddJob, connection);
         }
     }
-
-    public static void main(String[] args) {
-        new FrameAddJob();
-    }
-
 }

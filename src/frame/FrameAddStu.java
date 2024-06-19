@@ -90,6 +90,9 @@ public class FrameAddStu extends JFrame {
         comboBoxDept.addActionListener(e -> loadMajorComboBoxData((String) comboBoxDept.getSelectedItem()));
     }
 
+    /**
+     * 添加学生信息
+     */
     private void addStu() {
         Connection connection = null;
         PreparedStatement statementAddStu = null;
@@ -131,6 +134,12 @@ public class FrameAddStu extends JFrame {
         }
     }
 
+    /**
+     * 获取专业 ID
+     *
+     * @param majorName 专业名
+     * @return 专业 ID
+     */
     private int getMajorId(String majorName) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -157,6 +166,9 @@ public class FrameAddStu extends JFrame {
         }
     }
 
+    /**
+     * 加载学院数据
+     */
     private void loadDeptComboBoxData() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -182,6 +194,11 @@ public class FrameAddStu extends JFrame {
         }
     }
 
+    /**
+     * 根据选中学院，加载专业
+     *
+     * @param deptName 学院名
+     */
     private void loadMajorComboBoxData(String deptName) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -205,9 +222,5 @@ public class FrameAddStu extends JFrame {
         } finally {
             DBUtil.close(resultSet, statement, connection);
         }
-    }
-
-    public static void main(String[] args) {
-        new FrameAddStu();
     }
 }

@@ -130,8 +130,10 @@ public class FrameAddEmpRecord extends JFrame {
         }
     }
 
+    /**
+     * 添加工作记录
+     */
     private void insertEmpRecord() {
-        // todo: 添加就业记录
         Connection connection = null;
         PreparedStatement statementUpdateStu = null;
 
@@ -165,6 +167,13 @@ public class FrameAddEmpRecord extends JFrame {
         }
     }
 
+    /**
+     * 根据公司与工作获取对应工作 ID
+     *
+     * @param jobTitle 工作
+     * @param comName  公司
+     * @return 工作 ID
+     */
     private int getJobId(String jobTitle, String comName) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -192,6 +201,9 @@ public class FrameAddEmpRecord extends JFrame {
         }
     }
 
+    /**
+     * 加载下拉框公司名
+     */
     private void loadComboBoxComName() {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -217,6 +229,11 @@ public class FrameAddEmpRecord extends JFrame {
         }
     }
 
+    /**
+     * 根据公司名加载工作
+     *
+     * @param comName 公司
+     */
     private void loadComboBoxJobTitle(String comName) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -241,9 +258,4 @@ public class FrameAddEmpRecord extends JFrame {
             DBUtil.close(resultSet, statement, connection);
         }
     }
-
-    public static void main(String[] args) {
-        new FrameAddEmpRecord();
-    }
-
 }
